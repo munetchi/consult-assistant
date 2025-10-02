@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # main ブランチにプッシュされたときに実行
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # お使いのNode.jsバージョンに合わせてください
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Vite application
+        run: npm run build
+        env:
+          # 例: もし .env ファイルに VITE_API_KEY がある場合、
+          # GitHub Secretsに設定した VITE_API_KEY をここで指定します。
+          # VITE_API_KEY: ${{ secrets.VITE_API_KEY }} 
+          # 現時点では .env は空なので、この行はコメントアウトまたは削除してOKです。
+          VITE_APP_ENV: production # 必要であれば本番環境用の変数を設定
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: ${{ github.ref == 'refs/heads/main' }} # main ブランチからのプッシュのみデプロイ
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHubが自動的に提供するトークン
+          publish_dir: ./dist # Viteのビルド出力ディレクトリ
+          publish_branch: gh-pages # デプロイ先のブランチ名（GitHub Pagesが参照するブランチ）
+          # user_name: 'github-actions[bot]' # オプション: コミットユーザー名
+          # user_email: 'github-actions[bot]@users.noreply.github.com' # オプション: コミットメールアドレス
