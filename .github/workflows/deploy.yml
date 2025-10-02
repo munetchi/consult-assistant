@@ -8,7 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
+      pages: write
+      id-token: write # GitHub PagesのOIDCプロバイダを使用する場合に必要
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,7 +29,7 @@ jobs:
         env:
           # 例: もし .env ファイルに VITE_API_KEY がある場合、
           # GitHub Secretsに設定した VITE_API_KEY をここで指定します。
-          # VITE_API_KEY: ${{ secrets.VITE_API_KEY }} 
+          # VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
           # 現時点では .env は空なので、この行はコメントアウトまたは削除してOKです。
           VITE_APP_ENV: production # 必要であれば本番環境用の変数を設定
 
